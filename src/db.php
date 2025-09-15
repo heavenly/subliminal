@@ -23,10 +23,24 @@ function incrementPostViews($slug) {
     $pdo = getDbConnection();
     if (!$pdo) return 0;
 
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $cooldown_hours = 24; // Only count unique views per IP every 24 hours
+
     try {
-        // Insert or update views
-        $stmt = $pdo->prepare("INSERT INTO page_views (post_slug, views) VALUES (?, 1) ON DUPLICATE KEY UPDATE views = views + 1");
-        $stmt->execute([$slug]);
+        // Check if this IP viewed this post recently
+        $stmt = $pdo->prepare("SELECT id FROM view_logs WHERE post_slug = ? AND ip_address = ? AND viewed_at > DATE_SUB(NOW(), INTERVAL ? HOUR)");
+        $stmt->execute([$slug, $ip, $cooldown_hours]);
+        $recent_view = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$recent_view) {
+            // Log the view
+            $stmt = $pdo->prepare("INSERT INTO view_logs (post_slug, ip_address) VALUES (?, ?)");
+            $stmt->execute([$slug, $ip]);
+
+            // Increment views
+            $stmt = $pdo->prepare("INSERT INTO page_views (post_slug, views) VALUES (?, 1) ON DUPLICATE KEY UPDATE views = views + 1");
+            $stmt->execute([$slug]);
+        }
 
         // Get current views
         $stmt = $pdo->prepare("SELECT views FROM page_views WHERE post_slug = ?");

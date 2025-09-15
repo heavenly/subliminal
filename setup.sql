@@ -13,6 +13,16 @@ CREATE TABLE IF NOT EXISTS page_views (
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Create view_logs table for unique tracking
+CREATE TABLE IF NOT EXISTS view_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    post_slug VARCHAR(255) NOT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_post_ip (post_slug, ip_address),
+    INDEX idx_viewed_at (viewed_at)
+);
+
 -- Insert sample data (optional)
 INSERT INTO page_views (post_slug, views) VALUES
 ('sample-post', 0)
