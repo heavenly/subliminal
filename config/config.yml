@@ -1,3 +1,7 @@
 title: your_blog_title
 description: your_blog_description
 secret_key: your_secret_key
+db_host: localhost
+db_user: your_db_user
+db_pass: your_db_password
+db_name: blog_db

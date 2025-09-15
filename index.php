@@ -22,6 +22,7 @@ $post_content = '';
 $post_metadata = [];
 $toc = [];
 $post_directory = $posts_directory;
+$view_count = 0;
 
 if ($requested_post) {
     foreach ($markdown_files as $file_info) {
@@ -44,6 +45,10 @@ if ($requested_post) {
         $post_content = markdownToHtml($post_metadata['content'], $article_name, $post_directory);
 
         $current_post = $requested_post;
+
+        // Increment and get view count
+        $post_slug = pathinfo($requested_post, PATHINFO_FILENAME);
+        $view_count = incrementPostViews($post_slug);
     }
 }
 

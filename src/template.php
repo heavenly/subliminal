@@ -46,6 +46,7 @@
                                 • edited on <?php echo strtolower(date('F j, Y', $last_modified_timestamp)); ?>
                             <?php endif; ?>
                             • <span class="reading-time"></span>
+                            • <?php echo $view_count; ?> views
                         </div>
                         <?php if ($post_metadata['description']): ?>
                             <p class="post-description"><?php echo htmlspecialchars($post_metadata['description']); ?></p>
